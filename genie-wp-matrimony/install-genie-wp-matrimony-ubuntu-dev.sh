@@ -12,7 +12,11 @@ download_files() {
 	wget https://wordpress.org/latest.tar.gz
 	#download plugin
 	rm -f genie-wp-matrimony.zip
-	wget https://downloads.wordpress.org/plugin/genie-wp-matrimony.zip
+	#wget https://downloads.wordpress.org/plugin/genie-wp-matrimony.zip
+	wget https://github.com/ITechGenie/genie-wp-matrimony/archive/oauth10a.zip -O genie-wp-matrimony.zip
+	#download plugin2
+	rm -f rest-api-oauth1.zip
+	wget https://downloads.wordpress.org/plugin/rest-api-oauth1.zip
 	echo "done"
 }
 echo "================================="
@@ -72,6 +76,13 @@ if [ "$needdownload" == n ] ; then
 		if [ -e genie-wp-matrimony.zip ]
 		then
 			echo "Found genie-wp-matrimony.zip"
+			if [ -e rest-api-oauth1.zip ]
+			then
+				echo "Found rest-api-oauth1.zip"
+			else
+				echo "File not found, downloading " ;
+				download_files
+			fi
 		else
 			echo "File not found, downloading " ;
 			download_files
