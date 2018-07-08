@@ -1,8 +1,14 @@
 # author: prakashm88
 # description: Script for auto installation of GenieWPMatrimony plugin
-# name: install-genie-wp-matrimony-ubuntu.sh
+# name: install-genie-wp-matrimony-ubuntu-dev.sh
 
 #!/bin/bash -e
+
+if [ "$EUID" -ne 0 ]
+  then echo "Please run as root"
+  exit
+fi
+
 download_files() {
 	#echo "====================================================================="
 	echo "Downloading necessary files"
@@ -24,9 +30,13 @@ echo "Genie WP Matrimony Install Script"
 echo "================================="
 echo "Downloading necessary tools: "
 echo "============================="
-apt-get install apache2 php libapache2-mod-php mysql-server mysql-client php-mysql perlbrew wget tar zip unzip pv
+apt-get install apache2 php libapache2-mod-php mysql-server mysql-client php-mysql perlbrew wget tar zip unzip pv composer subversion phpunit
+wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+php wp-cli.phar --info
+chmod +x wp-cli.phar
+sudo mv wp-cli.phar /usr/local/bin/wp
 echo "================================="
-echo "Restart Apache and MySQL services (Recomended for new installations)? (y/n)"
+echo "Restart Apache and MySQL services (Recommended for new installations)? (y/n)"
 read -e restartserv
 if [ "$restartserv" == n ] ; then
 	echo "Skipping restarts"
@@ -62,9 +72,10 @@ if [ "$needcreate" == n ] ; then
 else
 	#echo "====================================================================="
 	echo "================================="
-	echo "Creating MySQL Database and User, enter Root password when promoted"
+	echo "Creating MySQL Databases and User, enter Root password when promoted"
 	#echo "====================================================================="
 	mysql -u root -p -e "DROP DATABASE IF EXISTS $dbname; create database $dbname; GRANT ALL PRIVILEGES ON $dbname.* TO $dbuser@localhost IDENTIFIED BY '$dbpass'"
+	mysql -u root -p -e "DROP DATABASE IF EXISTS $dbname_tests; create database $dbname; GRANT ALL PRIVILEGES ON $dbname.* TO $dbuser@localhost IDENTIFIED BY '$dbpass'"
 	echo "done"
 fi
 echo "Download Wordpress and GenieWPMatrimony plugins (place latest.tar.gz and genie-wp-matrimony.zip for offline installation) ?  (y/n)"

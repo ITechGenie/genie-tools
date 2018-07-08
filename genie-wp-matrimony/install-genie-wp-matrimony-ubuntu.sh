@@ -3,6 +3,12 @@
 # name: install-genie-wp-matrimony-ubuntu.sh
 
 #!/bin/bash -e
+
+if [ "$EUID" -ne 0 ]
+  then echo "Please run as root"
+  exit
+fi
+
 download_files() {
 	#echo "====================================================================="
 	echo "Downloading necessary files"
@@ -22,7 +28,7 @@ echo "Downloading necessary tools: "
 echo "============================="
 apt-get install apache2 php libapache2-mod-php mysql-server mysql-client php-mysql perlbrew wget tar zip unzip pv
 echo "================================="
-echo "Restart Apache and MySQL services (Recomended for new installations)? (y/n)"
+echo "Restart Apache and MySQL services (Recommended for new installations)? (y/n)"
 read -e restartserv
 if [ "$restartserv" == n ] ; then
 	echo "Skipping restarts"
